@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Item {
+  id                String   @id @default(cuid())
+  modelKey          String
+  area              String
+  furnitureType     String
+
+  // EXAKTE MASSE (cm)
+  widthCm           Float
+  heightCm          Float
+  depthCm           Float
+
+  imageUrl          String
+  suggestionNumbers Json
+  headline          String?
+  raster            String?
+  baseType          String?
+  styleTags         Json
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model DimensionDefinition {
+  id        String  @id @default(cuid())
+
+  // Kontext
+  area      String   // WOHNEN, BUERO, GARDEROBE, ...
+  dimension String   // DEPTH | WIDTH | HEIGHT
+
+  // Ergebnis
+  key       String   // SLIM | STANDARD | DEEP | LOW | HIGH | ROOM_HIGH
+
+  // Wertebereich in cm
+  minCm     Float?
+  maxCm     Float?
+
+  createdAt DateTime @default(now())
+}
+
+enum ModelKey {
+  HARMONY
+  DEVISO
+  CONCETTO
+  SIENA
+  LAVITA
+  ENJOY
+  MANHATTAN
+  BRISTOL
+  ALLEGRO
+  DACAPO
+  CENTO
+  OPUS
+}
+
+enum Area {
+  BUERO
+  WOHNEN
+  SPEISEN
+  GARDEROBE
+  SCHLAFEN
+}
+
+enum FurnitureType {
+  SIDEBOARD
+  LOWBOARD
+  HIGHBOARD
+  VITRINE
+  KORPUSELEMENT
+  SCHRANK
+  REGAL
+}
+
+enum Raster {
+  RASTER_1_5
+  RASTER_2
+  RASTER_2_5
+  RASTER_3
+  RASTER_4
+  RASTER_5
+}
+
+enum BaseType {
+  FEET
+  FRAME
+}
+
+enum DepthCategory {
+  SLIM
+  STANDARD
+  DEEP
+}
