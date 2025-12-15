@@ -55,7 +55,7 @@ export async function PUT(
     title: updated.title,
     imageUrl: updated.imageUrl,
     suggestionNumbers: fromCsv(updated.suggestionNumbers),
-    tags: updated.tags.map((t) => t.name),
+    tags: updated.tags.map((t: { name: string }) => t.name),
   });
 }
 
