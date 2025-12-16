@@ -1,11 +1,16 @@
 // prisma/schema.prisma
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  // WICHTIG: Das hier erlaubt den Adapter-Code in src/lib/prisma.ts
+  previewFeatures = ["driverAdapters"] 
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+  // WICHTIG: Die Verknüpfung zu deinen Vercel-Variablen
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Item {
@@ -47,6 +52,7 @@ model DimensionDefinition {
   createdAt DateTime @default(now())
 }
 
+// Deine Enums bleiben gleich
 enum ModelKey {
   HARMONY
   DEVISO
