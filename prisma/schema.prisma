@@ -1,11 +1,16 @@
+// prisma/schema.prisma
+
 generator client {
   provider        = "prisma-client-js"
+  // Das brauchen wir für den Adapter, den wir vorhin eingerichtet haben
   previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "postgresql"
-  // HIER KEINE URLS MEHR EINFÜGEN! Das übernimmt jetzt die config Datei.
+  provider  = "postgresql"
+  // PRISMA 6 STANDARD: Die URLs müssen hier stehen!
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Item {
@@ -32,21 +37,15 @@ model Item {
 
 model DimensionDefinition {
   id        String  @id @default(cuid())
-
-  // Kontext
-  area      String   // WOHNEN, BUERO, GARDEROBE, ...
-  dimension String   // DEPTH | WIDTH | HEIGHT
-
-  // Ergebnis
-  key       String   // SLIM | STANDARD | DEEP | LOW | HIGH | ROOM_HIGH
-
-  // Wertebereich in cm
+  area      String
+  dimension String
+  key       String
   minCm     Float?
   maxCm     Float?
-
   createdAt DateTime @default(now())
 }
 
+// Deine Enums
 enum ModelKey {
   HARMONY
   DEVISO
