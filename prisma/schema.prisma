@@ -1,12 +1,11 @@
 generator client {
   provider        = "prisma-client-js"
-  // Aktiviert den Adapter-Modus (für src/lib/prisma.ts)
   previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
   provider = "postgresql"
-  // HIER KEINE URLS! Die kommen aus der prisma.config.ts
+  // HIER KEINE URLs! Die kommen aus der prisma.config.ts
 }
 
 model Item {
@@ -37,7 +36,6 @@ model DimensionDefinition {
   createdAt DateTime @default(now())
 }
 
-// Enums
 enum ModelKey { HARMONY DEVISO CONCETTO SIENA LAVITA ENJOY MANHATTAN BRISTOL ALLEGRO DACAPO CENTO OPUS }
 enum Area { BUERO WOHNEN SPEISEN GARDEROBE SCHLAFEN }
 enum FurnitureType { SIDEBOARD LOWBOARD HIGHBOARD VITRINE KORPUSELEMENT SCHRANK REGAL }

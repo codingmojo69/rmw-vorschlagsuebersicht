@@ -9,11 +9,11 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^6.0.0", 
-    "@prisma/client": "^6.0.0",
+    "@prisma/adapter-pg": "^7.0.0",
+    "@prisma/client": "^7.0.0",
     "next": "16.0.10",
     "pg": "^8.13.1",
-    "prisma": "^6.0.0",
+    "prisma": "^7.0.0",
     "react": "19.0.0-rc.0",
     "react-dom": "19.0.0-rc.0"
   },
@@ -29,10 +29,5 @@
     "eslint-config-next": "16.0.10",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.0.0"
-  },
-  "overrides": {
-    "prisma": "6.0.0", 
-    "@prisma/client": "6.0.0",
-    "@prisma/adapter-pg": "6.0.0"
   }
 }
