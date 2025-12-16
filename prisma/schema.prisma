@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // HIER KEINE URLs! Die kommen aus der prisma.config.ts
+  // Keine URLs hier! Die kommen aus prisma.config.ts (Prisma 7 Standard)
 }
 
 model Item {
@@ -13,32 +13,83 @@ model Item {
   modelKey          String
   area              String
   furnitureType     String
+
+  // EXAKTE MASSE (cm)
   widthCm           Float
   heightCm          Float
   depthCm           Float
+
   imageUrl          String
   suggestionNumbers Json
   headline          String?
   raster            String?
   baseType          String?
   styleTags         Json
+
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 }
 
 model DimensionDefinition {
-  id        String   @id @default(cuid())
+  id        String  @id @default(cuid())
   area      String
   dimension String
   key       String
   minCm     Float?
   maxCm     Float?
+
   createdAt DateTime @default(now())
 }
 
-enum ModelKey { HARMONY DEVISO CONCETTO SIENA LAVITA ENJOY MANHATTAN BRISTOL ALLEGRO DACAPO CENTO OPUS }
-enum Area { BUERO WOHNEN SPEISEN GARDEROBE SCHLAFEN }
-enum FurnitureType { SIDEBOARD LOWBOARD HIGHBOARD VITRINE KORPUSELEMENT SCHRANK REGAL }
-enum Raster { RASTER_1_5 RASTER_2 RASTER_2_5 RASTER_3 RASTER_4 RASTER_5 }
-enum BaseType { FEET FRAME }
-enum DepthCategory { SLIM STANDARD DEEP }
+enum ModelKey {
+  HARMONY
+  DEVISO
+  CONCETTO
+  SIENA
+  LAVITA
+  ENJOY
+  MANHATTAN
+  BRISTOL
+  ALLEGRO
+  DACAPO
+  CENTO
+  OPUS
+}
+
+enum Area {
+  BUERO
+  WOHNEN
+  SPEISEN
+  GARDEROBE
+  SCHLAFEN
+}
+
+enum FurnitureType {
+  SIDEBOARD
+  LOWBOARD
+  HIGHBOARD
+  VITRINE
+  KORPUSELEMENT
+  SCHRANK
+  REGAL
+}
+
+enum Raster {
+  RASTER_1_5
+  RASTER_2
+  RASTER_2_5
+  RASTER_3
+  RASTER_4
+  RASTER_5
+}
+
+enum BaseType {
+  FEET
+  FRAME
+}
+
+enum DepthCategory {
+  SLIM
+  STANDARD
+  DEEP
+}
