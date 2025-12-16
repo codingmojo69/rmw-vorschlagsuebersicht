@@ -1,15 +1,13 @@
-// src/lib/prisma.ts
 import { PrismaClient } from "@prisma/client";
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-export const prisma = globalForPrisma.prisma || new PrismaClient({
-  datasources: {
-    db: {
-      // Die App nutzt den Transaction Pooler (Port 6543) für Performance
-      url: process.env.DATABASE_URL,
-    },
-  },
-});
+export const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    // Wir entfernen 'datasources', da Prisma das automatisch aus der .env holt.
+    // Optional: Logging aktivieren, um Fehler besser zu finden
+    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+  });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
