@@ -1,11 +1,12 @@
 // prisma.config.ts
-import "dotenv/config";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from '@prisma/config';
 
 export default defineConfig({
-  schema: "prisma/schema.prisma",
-  datasource: {
-    // Für Migrationen (CLI) nutzen wir die Session-Mode Connection (Port 5432)
-    url: env("DIRECT_URL"),
+  // Wir verbinden uns explizit mit der Datasource "db", die wir im Schema definiert haben
+  datasources: {
+    db: {
+      // Nutze DIRECT_URL für Migrationen, Fallback auf DATABASE_URL
+      url: process.env.DIRECT_URL || process.env.DATABASE_URL,
+    },
   },
 });
