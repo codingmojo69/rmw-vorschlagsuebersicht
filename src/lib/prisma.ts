@@ -1,18 +1,15 @@
-import "dotenv/config";
+// src/lib/prisma.ts
 import { PrismaClient } from "@prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 
-const adapter = new PrismaBetterSqlite3({
-  url: process.env.DATABASE_URL || "file:./prisma/dev.db",
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+
+export const prisma = globalForPrisma.prisma || new PrismaClient({
+  datasources: {
+    db: {
+      // Die App nutzt den Transaction Pooler (Port 6543) für Performance
+      url: process.env.DATABASE_URL,
+    },
+  },
 });
-
-// verhindert zig Clients in dev (Hot Reload)
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
-
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    adapter,
-  });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
