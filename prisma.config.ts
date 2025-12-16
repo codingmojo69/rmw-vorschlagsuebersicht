@@ -1,8 +1,8 @@
 import { defineConfig } from '@prisma/config';
 
 export default defineConfig({
+  // In Prisma 7 heißt das Feld 'datasource' (Einzahl) und ersetzt die URL im Schema
   datasource: {
-    // Das '|| ""' am Ende garantiert TypeScript, dass es immer ein String ist.
     url: process.env.DIRECT_URL || process.env.DATABASE_URL || "",
   },
 });

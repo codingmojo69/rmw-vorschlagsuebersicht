@@ -1,16 +1,12 @@
-// prisma/schema.prisma
-
 generator client {
   provider        = "prisma-client-js"
-  // Das brauchen wir für den Adapter, den wir vorhin eingerichtet haben
+  // Aktiviert den Adapter-Modus (für src/lib/prisma.ts)
   previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider  = "postgresql"
-  // PRISMA 6 STANDARD: Die URLs müssen hier stehen!
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  // HIER KEINE URLS! Die kommen aus der prisma.config.ts
 }
 
 model Item {
@@ -18,25 +14,21 @@ model Item {
   modelKey          String
   area              String
   furnitureType     String
-
-  // EXAKTE MASSE (cm)
   widthCm           Float
   heightCm          Float
   depthCm           Float
-
   imageUrl          String
   suggestionNumbers Json
   headline          String?
   raster            String?
   baseType          String?
   styleTags         Json
-
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 }
 
 model DimensionDefinition {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   area      String
   dimension String
   key       String
@@ -45,56 +37,10 @@ model DimensionDefinition {
   createdAt DateTime @default(now())
 }
 
-// Deine Enums
-enum ModelKey {
-  HARMONY
-  DEVISO
-  CONCETTO
-  SIENA
-  LAVITA
-  ENJOY
-  MANHATTAN
-  BRISTOL
-  ALLEGRO
-  DACAPO
-  CENTO
-  OPUS
-}
-
-enum Area {
-  BUERO
-  WOHNEN
-  SPEISEN
-  GARDEROBE
-  SCHLAFEN
-}
-
-enum FurnitureType {
-  SIDEBOARD
-  LOWBOARD
-  HIGHBOARD
-  VITRINE
-  KORPUSELEMENT
-  SCHRANK
-  REGAL
-}
-
-enum Raster {
-  RASTER_1_5
-  RASTER_2
-  RASTER_2_5
-  RASTER_3
-  RASTER_4
-  RASTER_5
-}
-
-enum BaseType {
-  FEET
-  FRAME
-}
-
-enum DepthCategory {
-  SLIM
-  STANDARD
-  DEEP
-}
+// Enums
+enum ModelKey { HARMONY DEVISO CONCETTO SIENA LAVITA ENJOY MANHATTAN BRISTOL ALLEGRO DACAPO CENTO OPUS }
+enum Area { BUERO WOHNEN SPEISEN GARDEROBE SCHLAFEN }
+enum FurnitureType { SIDEBOARD LOWBOARD HIGHBOARD VITRINE KORPUSELEMENT SCHRANK REGAL }
+enum Raster { RASTER_1_5 RASTER_2 RASTER_2_5 RASTER_3 RASTER_4 RASTER_5 }
+enum BaseType { FEET FRAME }
+enum DepthCategory { SLIM STANDARD DEEP }

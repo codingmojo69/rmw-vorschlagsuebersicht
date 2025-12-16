@@ -1,26 +1,19 @@
-import { Pool } from "pg";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "@prisma/client";
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/client';
+
+const connectionString = process.env.DATABASE_URL;
+
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-// Funktion, um den Client zu erstellen (mit Adapter!)
-const prismaClientSingleton = () => {
-  // 1. Verbindungspool erstellen
-  const connectionString = process.env.DATABASE_URL;
-  const pool = new Pool({ connectionString });
-  
-  // 2. Adapter erstellen
-  const adapter = new PrismaPg(pool);
-  
-  // 3. Prisma mit dem Adapter initialisieren
-  return new PrismaClient({
+export const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
     adapter,
-    // Optional: Logging im Dev-Modus
-    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    // In V7 kann man hier explizit nochmal Konfig übergeben, wenn nötig
   });
-};
 
-export const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
