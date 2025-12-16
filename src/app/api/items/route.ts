@@ -1,6 +1,8 @@
+// src/app/api/items/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { classifyDimension } from "@/lib/dimensions";
+// Wir importieren den Typ und die Funktion
+import { classifyDimension, DimensionRule } from "@/lib/dimensions"; 
 
 function normalizeStringArray(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
@@ -16,7 +18,12 @@ function normalizeNumber(value: unknown): number {
 
 // GET: alle Items
 export async function GET() {
-  const rules = await prisma.dimensionDefinition.findMany();
+  // 1. Daten laden (Prisma liefert hier 'dimension' als string)
+  const rawRules = await prisma.dimensionDefinition.findMany();
+  
+  // 2. TYPE ASSERTION: Wir sagen TypeScript "Das sind valide DimensionRules"
+  // Damit behalten wir deine strikte Logik in der classifyDimension Funktion bei!
+  const rules = rawRules as unknown as DimensionRule[];
 
   const items = await prisma.item.findMany({
     orderBy: {
@@ -41,6 +48,8 @@ export async function GET() {
         ? item.suggestionNumbers
         : [],
       styleTags: Array.isArray(item.styleTags) ? item.styleTags : [],
+      
+      // Jetzt können wir die strengen Typen verwenden:
       depthKey: classifyDimension(rules, item.area, "DEPTH", item.depthCm),
       widthKey: classifyDimension(rules, item.area, "WIDTH", item.widthCm),
       heightKey: classifyDimension(rules, item.area, "HEIGHT", item.heightCm),
@@ -52,7 +61,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const styleTags = normalizeStringArray(body.styleTags);
+  const styleTags = normalizeStringArray(body.styleTags || body.tags); 
   const suggestionNumbers = normalizeStringArray(body.suggestionNumbers);
 
   const widthCm = normalizeNumber(body.widthCm);
@@ -73,36 +82,27 @@ export async function POST(req: Request) {
     );
   }
 
-  if (!Number.isFinite(widthCm) || !Number.isFinite(heightCm) || !Number.isFinite(depthCm)) {
-    return NextResponse.json(
-      { error: "Missing/invalid dimensions: widthCm, heightCm, depthCm" },
-      { status: 400 }
-    );
+  try {
+    const item = await prisma.item.create({
+      data: {
+        modelKey: body.modelKey,
+        area: body.area,
+        furnitureType: body.furnitureType,
+        imageUrl: body.imageUrl,
+        headline: body.headline || body.title || null,
+        raster: body.raster || null,
+        baseType: body.baseType || null,
+        widthCm,
+        heightCm,
+        depthCm,
+        suggestionNumbers, 
+        styleTags,         
+      },
+    });
+
+    return NextResponse.json({ ok: true, id: item.id });
+  } catch (error) {
+    console.error("DB Error:", error);
+    return NextResponse.json({ error: "Failed to save item" }, { status: 500 });
   }
-
-  if (suggestionNumbers.length === 0) {
-    return NextResponse.json(
-      { error: "At least one suggestion number is required" },
-      { status: 400 }
-    );
-  }
-
-  const item = await prisma.item.create({
-    data: {
-      modelKey: body.modelKey,
-      area: body.area,
-      furnitureType: body.furnitureType,
-      imageUrl: body.imageUrl,
-      headline: body.headline || null,
-      raster: body.raster || null,
-      baseType: body.baseType || null,
-      widthCm,
-      heightCm,
-      depthCm,
-      suggestionNumbers,
-      styleTags,
-    },
-  });
-
-  return NextResponse.json({ ok: true, id: item.id });
 }

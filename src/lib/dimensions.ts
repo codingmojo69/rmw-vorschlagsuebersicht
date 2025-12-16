@@ -1,7 +1,11 @@
+// src/lib/dimensions.ts
+
+export type DimensionType = "DEPTH" | "WIDTH" | "HEIGHT";
+
 export type DimensionRule = {
   id: string;
   area: string;
-  dimension: "DEPTH" | "WIDTH" | "HEIGHT";
+  dimension: DimensionType; // Wir bleiben STRENG!
   key: string;
   minCm: number | null;
   maxCm: number | null;
@@ -10,7 +14,7 @@ export type DimensionRule = {
 export function classifyDimension(
   rules: DimensionRule[],
   area: string,
-  dimension: "DEPTH" | "WIDTH" | "HEIGHT",
+  dimension: DimensionType, // Wir bleiben STRENG!
   valueCm: number
 ): string | null {
   if (!Number.isFinite(valueCm)) return null;
@@ -22,7 +26,6 @@ export function classifyDimension(
 
   if (candidates.length === 0) return null;
 
-  // Bevorzugt die “präziseste” Regel (kleinste Range, am wenigsten offene Grenzen)
   const score = (r: DimensionRule) => {
     const min = r.minCm ?? -Infinity;
     const max = r.maxCm ?? Infinity;
